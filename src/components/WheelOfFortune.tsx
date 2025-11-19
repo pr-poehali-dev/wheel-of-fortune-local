@@ -145,6 +145,10 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, sp
     if (mainLuckyIndex !== -1) {
       const luckyWinCount = luckyWins.get(items[mainLuckyIndex]) || 0;
       
+      if (luckyWinCount === 0) {
+        return mainLuckyIndex;
+      }
+      
       if (luckyWinCount < 3) {
         const shouldWinThisRound = spinCount % 2 === 0 || spinCount % 3 === 0;
         
