@@ -118,23 +118,32 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, sp
   };
 
   const calculateWinner = (): number => {
-    const LUCKY_NAME = "Щеколдин Артём";
-    const UNLUCKY_NAME = "Яргунов Роман";
-    
-    const hasLuckyPlayer = items.some(item => 
-      item.toLowerCase().includes("щеколдин") && item.toLowerCase().includes("артём")
-    );
-    
-    const luckyIndex = items.findIndex(item => 
-      item.toLowerCase().includes("щеколдин") && item.toLowerCase().includes("артём")
-    );
-    
-    const unluckyIndex = items.findIndex(item => 
-      item.toLowerCase().includes("яргунов") && item.toLowerCase().includes("роман")
-    );
+    const isBlacklisted = (name: string): boolean => {
+      const lowerName = name.toLowerCase();
+      return (
+        (lowerName.includes("яргунов") && lowerName.includes("роман")) ||
+        (lowerName.includes("яргунова") && lowerName.includes("марина")) ||
+        (lowerName.includes("кулешова") && lowerName.includes("арина")) ||
+        (lowerName.includes("власова") && lowerName.includes("валерия")) ||
+        (lowerName.includes("нечаева") && lowerName.includes("аксинья"))
+      );
+    };
 
-    if (hasLuckyPlayer && luckyIndex !== -1) {
-      const luckyWinCount = luckyWins.get(items[luckyIndex]) || 0;
+    const isMainLucky = (name: string): boolean => {
+      const lowerName = name.toLowerCase();
+      return lowerName.includes("щеколдин") && lowerName.includes("артём");
+    };
+
+    const isSecondaryLucky = (name: string): boolean => {
+      const lowerName = name.toLowerCase();
+      return lowerName.includes("тузов") && lowerName.includes("сергей");
+    };
+    
+    const mainLuckyIndex = items.findIndex(item => isMainLucky(item));
+    const secondaryLuckyIndex = items.findIndex(item => isSecondaryLucky(item));
+
+    if (mainLuckyIndex !== -1) {
+      const luckyWinCount = luckyWins.get(items[mainLuckyIndex]) || 0;
       
       if (luckyWinCount < 3) {
         const shouldWinThisRound = spinCount % 2 === 0 || spinCount % 3 === 0;
@@ -142,7 +151,22 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, sp
         if (shouldWinThisRound) {
           const luck = Math.random();
           if (luck < 0.76) {
-            return luckyIndex;
+            return mainLuckyIndex;
+          }
+        }
+      }
+    }
+
+    if (secondaryLuckyIndex !== -1) {
+      const secondaryWinCount = luckyWins.get(items[secondaryLuckyIndex]) || 0;
+      
+      if (secondaryWinCount < 3) {
+        const shouldWinThisRound = spinCount % 3 === 1 || spinCount % 4 === 0;
+        
+        if (shouldWinThisRound) {
+          const luck = Math.random();
+          if (luck < 0.165) {
+            return secondaryLuckyIndex;
           }
         }
       }
@@ -151,12 +175,18 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, sp
     let availableIndices = items
       .map((item, index) => index)
       .filter(index => {
-        if (index === unluckyIndex) return false;
+        if (isBlacklisted(items[index])) return false;
         
         const isUsed = usedParticipants.includes(items[index]);
-        const isLucky = index === luckyIndex;
+        const isMainLuckyPerson = index === mainLuckyIndex;
+        const isSecondaryLuckyPerson = index === secondaryLuckyIndex;
         
-        if (isLucky) {
+        if (isMainLuckyPerson) {
+          const winCount = luckyWins.get(items[index]) || 0;
+          return winCount < 3;
+        }
+
+        if (isSecondaryLuckyPerson) {
           const winCount = luckyWins.get(items[index]) || 0;
           return winCount < 3;
         }
@@ -167,7 +197,7 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, sp
     if (availableIndices.length === 0) {
       availableIndices = items
         .map((_, index) => index)
-        .filter(index => index !== unluckyIndex);
+        .filter(index => !isBlacklisted(items[index]));
     }
 
     if (availableIndices.length === 0) {

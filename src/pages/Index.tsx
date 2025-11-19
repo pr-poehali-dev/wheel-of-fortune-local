@@ -43,10 +43,11 @@ const Index = () => {
     setShowWinnerModal(true);
     setSpinCount(prev => prev + 1);
     
-    const isLucky = selectedWinner.toLowerCase().includes("щеколдин") && 
-                    selectedWinner.toLowerCase().includes("артём");
+    const lowerName = selectedWinner.toLowerCase();
+    const isMainLucky = lowerName.includes("щеколдин") && lowerName.includes("артём");
+    const isSecondaryLucky = lowerName.includes("тузов") && lowerName.includes("сергей");
     
-    if (isLucky) {
+    if (isMainLucky || isSecondaryLucky) {
       setLuckyWins(prev => {
         const newMap = new Map(prev);
         newMap.set(selectedWinner, (newMap.get(selectedWinner) || 0) + 1);
@@ -57,8 +58,10 @@ const Index = () => {
     }
   };
 
-  const isLuckyWinner = winner.toLowerCase().includes("щеколдин") && 
-                        winner.toLowerCase().includes("артём");
+  const lowerWinnerName = winner.toLowerCase();
+  const isLuckyWinner = 
+    (lowerWinnerName.includes("щеколдин") && lowerWinnerName.includes("артём")) ||
+    (lowerWinnerName.includes("тузов") && lowerWinnerName.includes("сергей"));
 
   return (
     <div className="min-h-screen bg-background py-8 sm:py-12 px-4">
@@ -107,7 +110,10 @@ const Index = () => {
                 <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar mb-4">
                   {items.map((item, index) => {
                     const isUsed = usedParticipants.includes(item);
-                    const isLucky = item.toLowerCase().includes("щеколдин") && item.toLowerCase().includes("артём");
+                    const lowerItem = item.toLowerCase();
+                    const isMainLucky = lowerItem.includes("щеколдин") && lowerItem.includes("артём");
+                    const isSecondaryLucky = lowerItem.includes("тузов") && lowerItem.includes("сергей");
+                    const isLucky = isMainLucky || isSecondaryLucky;
                     const winCount = luckyWins.get(item) || 0;
                     
                     return (
@@ -129,7 +135,9 @@ const Index = () => {
                         }`}>
                           {item}
                           {isLucky && winCount > 0 && (
-                            <span className="ml-2 text-xs text-primary">⭐ x{winCount}</span>
+                            <span className="ml-2 text-xs text-primary">
+                              {isMainLucky ? '⭐' : '✨'} x{winCount}
+                            </span>
                           )}
                         </span>
                       </div>
