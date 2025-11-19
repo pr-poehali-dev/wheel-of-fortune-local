@@ -5,9 +5,10 @@ interface WheelOfFortuneProps {
   onSpinComplete: (winner: string) => void;
   usedParticipants: string[];
   luckyWins: Map<string, number>;
+  spinCount: number;
 }
 
-const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins }: WheelOfFortuneProps) => {
+const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins, spinCount }: WheelOfFortuneProps) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -136,9 +137,13 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins }: 
       const luckyWinCount = luckyWins.get(items[luckyIndex]) || 0;
       
       if (luckyWinCount < 3) {
-        const luck = Math.random();
-        if (luck < 0.76) {
-          return luckyIndex;
+        const shouldWinThisRound = spinCount % 2 === 0 || spinCount % 3 === 0;
+        
+        if (shouldWinThisRound) {
+          const luck = Math.random();
+          if (luck < 0.76) {
+            return luckyIndex;
+          }
         }
       }
     }
@@ -227,10 +232,16 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins }: 
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
-      <div ref={containerRef} className="relative w-full max-w-[400px] aspect-square">
+      <div 
+        ref={containerRef} 
+        className="relative w-full max-w-[400px] aspect-square transition-all duration-500"
+        style={{
+          animation: 'scale-in 0.5s ease-out'
+        }}
+      >
         <canvas
           ref={canvasRef}
-          className="w-full h-full"
+          className={`w-full h-full transition-all duration-300 ${isSpinning ? 'animate-glow-pulse' : ''}`}
           style={{
             filter: 'drop-shadow(0 0 40px rgba(168, 85, 247, 0.4))',
           }}

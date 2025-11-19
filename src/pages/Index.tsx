@@ -14,6 +14,7 @@ const Index = () => {
   const [showWinnerModal, setShowWinnerModal] = useState(false);
   const [usedParticipants, setUsedParticipants] = useState<string[]>([]);
   const [luckyWins, setLuckyWins] = useState<Map<string, number>>(new Map());
+  const [spinCount, setSpinCount] = useState(0);
 
   const handleBulkAdd = () => {
     if (inputValue.trim() === '') {
@@ -40,6 +41,7 @@ const Index = () => {
   const handleSpinComplete = (selectedWinner: string) => {
     setWinner(selectedWinner);
     setShowWinnerModal(true);
+    setSpinCount(prev => prev + 1);
     
     const isLucky = selectedWinner.toLowerCase().includes("щеколдин") && 
                     selectedWinner.toLowerCase().includes("артём");
@@ -62,16 +64,16 @@ const Index = () => {
     <div className="min-h-screen bg-background py-8 sm:py-12 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-4xl sm:text-6xl font-bold text-primary mb-4 uppercase tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold text-primary mb-4 uppercase tracking-tight animate-fade-in">
             Колесо-Фортуны
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-sm sm:text-base max-w-3xl mx-auto leading-relaxed animate-fade-in" style={{animationDelay: '0.1s'}}>
             Бесплатное онлайн колесо фортуны для принятия решений и розыгрышей! Быстро и просто запускайте рулетку, выбирайте случайные варианты и организуйте честную жеребьевку
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-start">
-          <Card className="p-6 border-2 border-primary/30 bg-card/50 backdrop-blur">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-start animate-fade-in" style={{animationDelay: '0.2s'}}>
+          <Card className="p-6 border-2 border-primary/30 bg-card/50 backdrop-blur transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20">
             <h2 className="text-lg font-semibold mb-1 text-primary">Список участников</h2>
             <p className="text-xs text-muted-foreground mb-4">Введите имена участников</p>
             
@@ -94,7 +96,7 @@ const Index = () => {
                 </p>
                 <Button 
                   onClick={handleBulkAdd}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-lg"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                   disabled={inputValue.trim() === ''}
                 >
                   Добавить участников
@@ -111,11 +113,16 @@ const Index = () => {
                     return (
                       <div
                         key={index}
-                        className={`flex items-center justify-between p-3 rounded-lg border ${
+                        className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 hover:scale-102 ${
                           isUsed 
                             ? 'bg-muted/30 border-border/50 opacity-50' 
-                            : 'bg-muted/50 border-border'
+                            : 'bg-muted/50 border-border hover:border-primary/50 hover:shadow-md'
                         }`}
+                        style={{
+                          animation: 'slide-up 0.3s ease-out',
+                          animationDelay: `${index * 0.05}s`,
+                          animationFillMode: 'backwards'
+                        }}
                       >
                         <span className={`text-sm font-medium ${
                           isUsed ? 'line-through text-muted-foreground' : 'text-foreground'
@@ -153,6 +160,7 @@ const Index = () => {
               onSpinComplete={handleSpinComplete}
               usedParticipants={usedParticipants}
               luckyWins={luckyWins}
+              spinCount={spinCount}
             />
             {usedParticipants.length > 0 && (
               <p className="text-xs text-muted-foreground mt-6">
