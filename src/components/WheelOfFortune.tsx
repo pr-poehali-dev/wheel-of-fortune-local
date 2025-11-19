@@ -14,17 +14,15 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins }: 
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getColors = () => {
-    const gradients = [
-      ['#667eea', '#764ba2'],
-      ['#f093fb', '#f5576c'],
-      ['#4facfe', '#00f2fe'],
-      ['#43e97b', '#38f9d7'],
-      ['#fa709a', '#fee140'],
-      ['#30cfd0', '#330867'],
-      ['#a8edea', '#fed6e3'],
-      ['#ff9a9e', '#fecfef'],
+    const purpleShades = [
+      ['#9333ea', '#7c3aed'],
+      ['#a855f7', '#9333ea'],
+      ['#7c3aed', '#6b21a8'],
+      ['#c084fc', '#a855f7'],
+      ['#8b5cf6', '#7c3aed'],
+      ['#a78bfa', '#8b5cf6'],
     ];
-    return items.map((_, index) => gradients[index % gradients.length]);
+    return items.map((_, index) => purpleShades[index % purpleShades.length]);
   };
 
   const drawWheel = (currentRotation: number) => {
@@ -228,22 +226,28 @@ const WheelOfFortune = ({ items, onSpinComplete, usedParticipants, luckyWins }: 
   }, [items, rotation]);
 
   return (
-    <div className="flex flex-col items-center gap-4 sm:gap-6 w-full">
-      <div ref={containerRef} className="relative w-full max-w-[500px] aspect-square">
+    <div className="flex flex-col items-center gap-6 w-full">
+      <div ref={containerRef} className="relative w-full max-w-[400px] aspect-square">
         <canvas
           ref={canvasRef}
           className="w-full h-full"
           style={{
-            filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2))',
+            filter: 'drop-shadow(0 0 40px rgba(168, 85, 247, 0.4))',
           }}
         />
       </div>
       <button
         onClick={spin}
         disabled={isSpinning || items.length === 0}
-        className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-base sm:text-lg"
+        className="px-12 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base uppercase tracking-wide flex items-center gap-2"
       >
-        {isSpinning ? '🎡 Крутится...' : '🎯 Запустить колесо'}
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={isSpinning ? '' : ''}>
+          <path d="M8 2L6 4H10L8 2Z" fill="currentColor"/>
+          <path d="M4 8L6 6V10L4 8Z" fill="currentColor"/>
+          <path d="M8 14L10 12H6L8 14Z" fill="currentColor"/>
+          <path d="M12 8L10 10V6L12 8Z" fill="currentColor"/>
+        </svg>
+        {isSpinning ? 'Крутится...' : 'Запустить'}
       </button>
     </div>
   );

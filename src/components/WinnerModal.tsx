@@ -25,7 +25,7 @@ const WinnerModal = ({ open, onOpenChange, winner, isLuckyWinner }: WinnerModalP
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl sm:text-3xl font-bold">
-            {isLuckyWinner ? '🎉 Везунчик снова в игре!' : '🎊 Поздравляем!'}
+            🎊 Поздравляем!
           </DialogTitle>
         </DialogHeader>
         
@@ -38,15 +38,10 @@ const WinnerModal = ({ open, onOpenChange, winner, isLuckyWinner }: WinnerModalP
           </div>
 
           <div className="text-center space-y-2">
-            <p className="text-muted-foreground text-sm sm:text-base">Победитель розыгрыша</p>
+            <p className="text-muted-foreground text-sm sm:text-base">Выбран</p>
             <p className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {winner}
             </p>
-            {isLuckyWinner && (
-              <p className="text-xs sm:text-sm text-muted-foreground italic">
-                ⭐ Удача на вашей стороне!
-              </p>
-            )}
           </div>
 
           <button
